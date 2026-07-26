@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daniela — Field Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* parchment / paper */
+    --cover: #F0E9DA;         /* warm ivory — hero & footer bg */
+    --cover-deep: #1B2A22;    /* deep bottle green — dark section bg */
+    --paper: #F8F4E9;         /* content page bg, lighter than cover */
+    --paper-warm: #EFE6D2;    /* card hover on paper */
+
+    /* ink & text */
+    --ink: #241F19;           /* warm near-black — headings */
+    --ink-soft: #6B6153;      /* warm taupe-grey — body text */
+    --cream: #F0E9DA;         /* light text on dark bg */
+    --cream-soft: rgba(240,233,218,0.72);
+
+    /* hero heading */
+    --hero-green: #5C8A6B;    /* pastel-muted green for "Welcome to my website!" */
+
+    /* accents */
+    --coral: #A8503A;         /* rust / burgundy-terracotta — primary accent */
+    --coral-deep: #833D2C;
+    --gold: #9C7A32;          /* antique brass — specimen-stamp gold */
+    --sage: #4F7A5B;          /* botanical green accent */
+    --sage-deep: #3B5C44;
+    --lavender: #7C6A9C;      /* purple accent */
+    --lavender-deep: #5C4D80;
+    --lavender-pastel: #B79FD9; /* soft pastel purple for hero name */
+
+    --pink: #FFF4F2;          /* alternate section background */
+    --pink-deep: #F3CFC7;     /* dot accent for pink sections */
+
+    --dusty-blue: #7C93AA;    /* soft blue accent */
+    --dusty-blue-deep: #566E86;
+    --clay: #C4886F;          /* soft muted terracotta accent */
+    --clay-deep: #9C6552;
+
+    /* higher-saturation "pop" variants, used for card title tags */
+    --lavender-pop: #8A5FC7;
+    --clay-pop: #C2603A;
+    --blue-pop: #3A7CA8;
+    --gold-pop: #C99A2E;
+    --sage-pop: #3F8F5C;
+
+    /* pastel variants, used for the about-visual animation */
+    --lavender-pastel-vivid: #B39DDB;
+    --clay-pastel: #E3A78C;
+    --blue-pastel: #9FC1DE;
+    --gold-pastel: #E0C077;
+    --sage-pastel: #94C9A6;
+    --pink-pastel: #E8A0AC;
+
+    --line: rgba(36,31,25,0.14);
+    --line-dark: rgba(240,233,218,0.16);
+    --pill-bg: rgba(36,31,25,0.05);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cover);
+    color: var(--ink);
+    font-family: 'Newsreader', serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+
+  /* ---------- specimen number / tag ---------- */
+  .spec-no {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: 4px;
+    position: relative;
+    padding-bottom: 5px;
+  }
+  .spec-no::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 1px;
+    width: 0;
+    background: currentColor;
+    opacity: 0.55;
+    transition: width 0.7s ease 0.15s;
+  }
+  .reveal.in .spec-no::after { width: 36px; }
+  .page .spec-no { color: var(--coral-deep); }
+  .spec-no.accent-sage { color: var(--sage-deep); }
+  .spec-no.accent-lavender { color: var(--lavender-deep); }
+  .spec-no.accent-blue { color: var(--dusty-blue-deep); }
+  .spec-no.accent-clay { color: var(--clay-deep); }
+
+  /* ---------- hero ---------- */
+  .hero {
+    min-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    padding-top: 90px;
+    padding-bottom: 90px;
+  }
+
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: clamp(46px, 7vw, 76px);
+    line-height: 1.04;
+    color: var(--hero-green);
+    letter-spacing: -0.01em;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--lavender-pastel);
+  }
+
+  .tw-cursor {
+    display: inline-block;
+    font-weight: 300;
+    color: var(--coral);
+    margin-left: 2px;
+    animation: blink 0.9s step-end infinite;
+  }
+  .tw-cursor.done { display: none; }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+  .reveal-later {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal-later.in { opacity: 1; transform: translateY(0); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tw-cursor { animation: none; }
+  }
+
+  .hero-sub {
+    font-size: 16.5px;
+    color: var(--ink-soft);
+    margin-top: 30px;
+  }
+  .hero-sub + .hero-sub { margin-top: 2px; }
+
+  .hero-row {
+    display: flex;
+    align-items: center;
+    gap: 56px;
+  }
+
+  .hero-photo-frame {
+    position: relative;
+    flex-shrink: 0;
+    padding: 14px;
+  }
+  .hero-photo-frame::before,
+  .hero-photo-frame::after {
+    content: "";
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border: 1.5px solid var(--gold);
+  }
+  .hero-photo-frame::before { top: 0; left: 0; border-right: none; border-bottom: none; }
+  .hero-photo-frame::after { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+  .hero-photo {
+    width: 450px;
+    height: 330px;
+    object-fit: cover;
+    border-radius: 1px;
+    flex-shrink: 0;
+    display: block;
+    filter: grayscale(12%) contrast(1.02);
+    opacity: 0;
+    transform: scale(1.08);
+    animation: photoReveal 1.1s ease-out 0.2s forwards;
+  }
+  @keyframes photoReveal {
+    to { opacity: 1; transform: scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-photo { animation: none; opacity: 1; transform: none; }
+  }
+
+  .hero-text { flex: 1; margin-top: 30px; }
+
+  .scroll-cue {
+    position: absolute;
+    bottom: 24px;
+    left: 32px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--sage-deep);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .scroll-cue::after { content: "↓"; animation: bob 2s ease-in-out infinite; }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+  }
+
+  /* ---------- section shell (paper page) ---------- */
+  .page {
+    background: var(--paper);
+    color: var(--ink);
+    position: relative;
+    padding: 96px 0;
+  }
+
+  .page::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 10px;
+    background-image: radial-gradient(circle, var(--cover) 3.5px, transparent 3.6px);
+    background-size: 22px 10px;
+    background-position: center top;
+  }
+
+  .page.pink { background: var(--pink); }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 48px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .section-head h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 32px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    min-height: 1.2em;
+  }
+
+  .tw-hcursor {
+    display: inline-block;
+    font-weight: 300;
+    color: var(--coral);
+    margin-left: 2px;
+    animation: blink 0.9s step-end infinite;
+  }
+  .tw-hcursor.done { display: none; }
+
+  .about-flex {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+  }
+  .about-text-col { flex: 1; min-width: 0; }
+
+  .about-text {
+    max-width: 640px;
+    font-size: 17px;
+    color: var(--ink-soft);
+  }
+  .about-text + .about-text { margin-top: 16px; }
+
+  /* ---------- about visual with rectangular border ---------- */
+  .about-visual-box {
+    flex-shrink: 0;
+    padding: 24px 28px;
+    border: 1.5px solid var(--gold);
+    border-radius: 4px;
+    background: rgba(240, 233, 218, 0.4);
+    box-shadow: inset 0 0 12px rgba(36, 31, 25, 0.03);
+  }
+
+  .about-visual {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .visual-cells-static {
+    flex-shrink: 0;
+    color: var(--lavender-pastel-vivid);
+  }
+
+  .visual-arrow-static {
+    flex-shrink: 0;
+    color: var(--clay-pastel);
+  }
+
+  .visual-computer {
+    position: relative;
+    width: 246px;
+    height: 180px;
+    flex-shrink: 0;
+    color: var(--blue-pastel);
+  }
+  .computer-body { position: absolute; top: 0; left: 0; }
+  .computer-screen {
+    position: absolute;
+    top: 23px;
+    left: 23px;
+    width: 154px;
+    height: 77px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .screen-idle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0.3;
+    transition: opacity 0.4s ease;
+  }
+  .visual-computer.animating .screen-idle { opacity: 0; }
+
+  .screen-list {
+    width: 100%;
+    padding: 0 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    align-items: flex-start;
+  }
+  .skill-line {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+  .skill-line:nth-child(1) .skill-text { color: var(--clay-pop); }
+  .skill-line:nth-child(2) .skill-text { color: var(--sage-pop); }
+  .skill-line:nth-child(3) .skill-text { color: var(--blue-pop); }
+  .skill-line:nth-child(4) .skill-text { color: var(--lavender-pop); }
+  .skill-line:nth-child(5) .skill-text { color: var(--gold-pop); }
+  .skill-cursor {
+    display: inline-block;
+    color: var(--ink-soft);
+    margin-left: 1px;
+    animation: blink 0.9s step-end infinite;
+  }
+  .skill-cursor.hidden { visibility: hidden; }
+
+  @media (max-width: 900px) {
+    .about-flex { flex-direction: column; }
+    .about-visual-box { width: 100%; display: flex; justify-content: center; }
+  }
+
+  /* staggered entrance */
+  .stagger-p {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .stagger-p.in { opacity: 1; transform: translateY(0); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stagger-p { opacity: 1; transform: none; transition: none; }
+    .spec-no::after { transition: none; width: 36px; }
+  }
+
+  /* ---------- catalog grid ---------- */
+  .catalog {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin-top: 10px;
+  }
+
+  .card {
+    background: var(--paper);
+    padding: 30px 28px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease, opacity 0.6s ease;
+  }
+  .card.pre-reveal { opacity: 0; transform: translateY(18px); }
+  .card:hover {
+    background: var(--paper-warm);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(35,48,28,0.08);
+    z-index: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card.pre-reveal { opacity: 1; transform: none; }
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--coral);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s ease;
+    z-index: 2;
+  }
+  .card:hover::before { transform: scaleX(1); }
+  .card.accent-sage:hover::before { background: var(--sage); }
+  .card.accent-lavender:hover::before { background: var(--lavender); }
+  .card.accent-blue:hover::before { background: var(--dusty-blue); }
+  .card.accent-clay:hover::before { background: var(--clay); }
+
+  /* cursor-tracking spotlight */
+  .card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), rgba(181,101,74,0.10), transparent 70%);
+  }
+  .card:hover::after { opacity: 1; }
+  .card.accent-sage::after {
+    background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), rgba(79,122,91,0.12), transparent 70%);
+  }
+  .card.accent-lavender::after {
+    background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), rgba(124,106,156,0.14), transparent 70%);
+  }
+  .card.accent-blue::after {
+    background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), rgba(124,147,170,0.14), transparent 70%);
+  }
+  .card.accent-clay::after {
+    background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), rgba(196,136,111,0.14), transparent 70%);
+  }
+
+  .card > * { position: relative; z-index: 1; }
+
+  .card-top {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    position: relative;
+    margin-top: 10px;
+    min-height: 64px;
+  }
+
+  .card h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 21px;
+    color: var(--ink);
+    margin-top: 0;
+    line-height: 1.25;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+
+  .card .org {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 19px;
+    line-height: 1.25;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin-top: 0;
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+
+  .org-tag {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 21px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--coral-deep);
+    margin-bottom: 8px;
+  }
+  .org-tag::before {
+    content: "";
+    display: inline-block;
+    width: 20px;
+    height: 2px;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+  .org-detail {
+    display: block;
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 18px;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--ink-soft);
+  }
+
+  .card.accent-sage .org-tag { color: var(--sage-deep); }
+  .card.accent-lavender .org-tag { color: var(--lavender-pop); }
+  .card.accent-blue .org-tag { color: var(--blue-pop); }
+  .card.accent-clay .org-tag { color: var(--clay-pop); }
+
+  .card:hover h3 { opacity: 1; transform: translateY(0); }
+  .card:hover .org { opacity: 0; transform: translateY(6px); }
+
+  /* static label variant */
+  .org.static-label {
+    position: static;
+    margin-top: 10px;
+  }
+  .card:hover .org.static-label { opacity: 1; transform: none; }
+
+  .card p:not(.org),
+  .card .pills,
+  .card .card-media-wrapper,
+  .card .card-bullets {
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+  }
+  .card:hover p:not(.org),
+  .card:hover .pills,
+  .card:hover .card-media-wrapper,
+  .card:hover .card-bullets {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .card-bullets {
+    list-style: none;
+    margin-top: 6px;
+    padding-left: 0;
+  }
+  .card-bullets li {
+    position: relative;
+    padding-left: 18px;
+    margin-bottom: 8px;
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+  .card-bullets li:last-child { margin-bottom: 0; }
+  .card-bullets li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--coral);
+  }
+  .card.accent-blue .card-bullets li::before { color: var(--dusty-blue); }
+  .card.accent-lavender .card-bullets li::before { color: var(--lavender); }
+  .card.accent-clay .card-bullets li::before { color: var(--clay); }
+
+  .card p.card-sublabel {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--coral-deep);
+    margin-top: 16px;
+    margin-bottom: 2px;
+  }
+  .card p.card-sublabel:first-of-type { margin-top: 2px; }
+  .card.accent-blue p.card-sublabel { color: var(--dusty-blue-deep); }
+  .card.accent-lavender p.card-sublabel { color: var(--lavender-deep); }
+  .card.accent-clay p.card-sublabel { color: var(--clay-deep); }
+
+  /* Standardized Media Containers */
+  .card-media-wrapper {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card-media {
+    width: 100%;
+    height: 190px;
+    display: flex;
+    gap: 8px;
+    padding: 7px;
+    border: 1.5px solid var(--gold);
+    border-radius: 4px;
+    background: rgba(240, 233, 218, 0.35);
+    box-sizing: content-box;
+  }
+  .card.accent-blue .card-media { border-color: var(--dusty-blue); }
+  .card.accent-lavender .card-media { border-color: var(--lavender); }
+  .card.accent-clay .card-media { border-color: var(--clay); }
+
+  /* no-frame variant: used on the Hobbies section so images sit unframed */
+  .card-media.no-frame {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: none;
+    box-sizing: border-box;
+  }
+
+  .card-media.two-up .card-img-container { flex: 1; min-width: 0; }
+
+  .card-img-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    border-radius: 2px;
+    background: rgba(36, 31, 25, 0.04);
+  }
+
+  .card-img,
+  .card-vid {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    border-radius: 2px;
+  }
+
+  .card-img {
+    cursor: zoom-in;
+    transition: transform 0.3s ease;
+  }
+  .card-img:hover { transform: scale(1.04); }
+
+  .click-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--coral);
+    margin-top: 6px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    opacity: 0;
+    transform: translateY(-2px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    pointer-events: none;
+  }
+  .card:hover .click-hint {
+    opacity: 0.85;
+    transform: translateY(0);
+  }
+
+  .card p:not(.org) {
+    margin-top: 6px;
+    font-size: 14.5px;
+    color: var(--ink-soft);
+  }
+
+  .card .pills {
+    margin-top: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 3px 9px;
+    background: var(--pill-bg);
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    border-radius: 2px;
+  }
+
+  .icon-box {
+    width: 46px;
+    height: 46px;
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sage);
+    flex-shrink: 0;
+  }
+  .card.accent-lavender .icon-box { color: var(--lavender); }
+  .card.accent-blue .icon-box { color: var(--dusty-blue); }
+  .card.accent-clay .icon-box { color: var(--clay); }
+
+  /* ---------- Modal Lightbox ---------- */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(27, 42, 34, 0.85);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    padding: 24px;
+  }
+  .modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .modal-content {
+    max-width: 90vw;
+    max-height: 85vh;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--paper);
+    padding: 8px;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+  }
+  .modal-overlay.active .modal-content {
+    transform: scale(1);
+  }
+  .modal-content img {
+    max-width: 100%;
+    max-height: 80vh;
+    display: block;
+    object-fit: contain;
+    border-radius: 2px;
+  }
+  .modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: rgba(36, 31, 25, 0.7);
+    color: #fff;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+    z-index: 10;
+  }
+  .modal-close:hover {
+    background: var(--coral);
+  }
+
+  /* ---------- footer ---------- */
+  footer {
+    background: var(--cover);
+    padding: 90px 0 50px;
+    text-align: center;
+    position: relative;
+  }
+  footer::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 10px;
+    background-image: radial-gradient(circle, var(--pink-deep) 3.5px, transparent 3.6px);
+    background-size: 22px 10px;
+    background-position: center top;
+  }
+
+  footer h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 38px;
+    color: var(--ink);
+    max-width: 560px;
+    margin: 0 auto 12px;
+    letter-spacing: -0.01em;
+  }
+
+  .footer-email {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 15px;
+    color: var(--coral-deep);
+    margin-bottom: 28px;
+    letter-spacing: 0.02em;
+  }
+
+  .contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 60px;
+  }
+
+  .contact-links a {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--gold);
+    padding-bottom: 3px;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .contact-links a:hover { color: var(--lavender-deep); border-color: var(--lavender-deep); }
+
+  .fine-print {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    opacity: 0.6;
+    letter-spacing: 0.04em;
+  }
+
+  /* ---------- reveal on scroll ---------- */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .scroll-cue::after { animation: none; }
+  }
+
+  @media (max-width: 720px) {
+    .hero-row { flex-direction: column; align-items: flex-start; gap: 32px; }
+    .hero-photo { width: 100%; height: 260px; }
+    .hero-text { margin-top: 0; }
+  }
+
+  @media (max-width: 640px) {
+    .wrap { padding: 0 20px; }
+    .page { padding: 64px 0; }
+    footer h2 { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+  <section class="hero wrap">
+    <div class="hero-row">
+      <div class="hero-photo-frame">
+        <img src="image/headshot.jpeg" class="hero-photo" alt="Daniela">
+      </div>
+      <div class="hero-text">
+        <h1 id="typewriter"><span class="tw-line1"></span><br><em class="tw-line2"></em><span class="tw-cursor">|</span></h1>
+        <p class="hero-sub reveal-later">Computational &amp; Systems Biology, Minor in Mathematics</p>
+        <p class="hero-sub reveal-later">UCLA Undergraduate · Class of '27</p>
+      </div>
+    </div>
+    <p class="scroll-cue">Keep Scrolling</p>
+  </section>
+
+<section class="page" id="bg-section">
+  <div class="wrap reveal">
+    <p class="spec-no">01- BACKGROUND</p>
+    <div class="section-head" style="border:none; margin-bottom:24px; padding-bottom:0;">
+      <h2 class="tw-header" data-text="A Little Bit About Me"><span class="tw-htext"></span><span class="tw-hcursor">|</span></h2>
+    </div>
+    <div class="about-flex">
+      <div class="about-text-col">
+        <p class="about-text stagger-p">
+        I was born in Portland, Oregon but spent most of my childhood back home in Singapore, and I returned to the US for university! My current experiences bounce between cells and code. In the lab, I've been involved with cell culture and meiotic spreads. Behind the computer, I run genomic pipelines and build computational models to make sense of experimental data.   </p>
+        
+        <p class="about-text stagger-p">Most people gravitate toward either the bench or the computer. But for me, I've found that the most useful thing is to be fluent in both. That's the type of scientist I'm trying to become!   </p>
+        
+        <p class="about-text stagger-p"> So what does an ideal day look like for me? A successful cell split with no clumping, and code that runs within the first three trials :)  </p>
+
+      </div>
+      <div class="about-visual-box">
+        <div class="about-visual">
+          <div class="visual-cells-static">
+            <svg width="78" height="78" viewBox="0 0 66 66" fill="none" stroke="currentColor" stroke-width="1.4">
+              <circle cx="24" cy="27" r="17"/>
+              <circle cx="24" cy="27" r="6" fill="currentColor" stroke="none" opacity="0.5"/>
+              <circle cx="46" cy="17" r="10"/>
+              <circle cx="46" cy="17" r="3.6" fill="currentColor" stroke="none" opacity="0.5"/>
+              <circle cx="50" cy="42" r="11.5"/>
+              <circle cx="50" cy="42" r="4" fill="currentColor" stroke="none" opacity="0.5"/>
+            </svg>
+          </div>
+          <div class="visual-arrow-static">
+            <svg width="48" height="24" viewBox="0 0 42 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M0 10h34M27 3l8 7-8 7"/></svg>
+          </div>
+          <div class="visual-computer" aria-label="Computer screen with code typing animation">
+            <svg class="computer-body" width="246" height="180" viewBox="0 0 210 154" fill="none" stroke="currentColor" stroke-width="1.6">
+              <rect x="14" y="13" width="182" height="106" rx="4"/>
+              <path d="M2 135h206l-16-16H18z"/>
+            </svg>
+            <div class="computer-screen">
+              <svg class="screen-idle" width="154" height="77" viewBox="0 0 132 66" fill="none" stroke="currentColor" stroke-width="2.4">
+                <line x1="14" y1="16" x2="92" y2="16"/>
+                <line x1="14" y1="32" x2="72" y2="32"/>
+                <line x1="14" y1="48" x2="82" y2="48"/>
+              </svg>
+              <div class="screen-list">
+                <div class="skill-line" data-word="R"><span class="skill-text"></span><span class="skill-cursor">|</span></div>
+                <div class="skill-line" data-word="Linux"><span class="skill-text"></span><span class="skill-cursor hidden">|</span></div>
+                <div class="skill-line" data-word="MATLAB"><span class="skill-text"></span><span class="skill-cursor hidden">|</span></div>
+                <div class="skill-line" data-word="Python"><span class="skill-text"></span><span class="skill-cursor hidden">|</span></div>
+              
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="page pink">
+  <div class="wrap reveal">
+    <p class="spec-no accent-lavender">02- PASSIONS</p>
+    <div class="section-head" style="border:none; margin-bottom:24px; padding-bottom:0;">
+      <h2 class="tw-header" data-text="What I'm Passionate About"><span class="tw-htext"></span><span class="tw-hcursor">|</span></h2>
+    </div>
+    <p class="about-text stagger-p">
+    I'm especially passionate about women's health. This motivation stems from the research I’ve been involved with, including obesity and Polyendocrine Metabolic Ovarian Syndrome. Working in this field has shown me how underfunded and understudied many women's health conditions remain, and how much opportunity there is to improve research outcomes. </p> 
+    <p class="about-text stagger-p">
+    In a separate project, I've explored ways to make drug development more affordable, with the hope that science can advance treatments that are accessible to the patients who need them most.
+    </p>
+    <p class="about-text stagger-p">
+    These experiences have motivated me to improve the infrastructure behind healthcare. Whether it be through biology, data or digital systems, I hope to build tools that enable better research and expand access to care.  </p> 
+
+    <p class="about-text stagger-p">
+    Outside of research, I'm always looking to try good food, find a new running route, and tinker with small creative ideas, like coding this website independently! </p> 
+    </p>
+  </div>
+</section>
+
+<section class="page">
+  <div class="wrap reveal">
+    <p class="spec-no accent-blue">03-EXPERIENCES</p>
+    <div class="section-head">
+      <h2 class="tw-header" data-text="Research"><span class="tw-htext"></span><span class="tw-hcursor">|</span></h2>
+    </div>
+
+    <div class="catalog">
+      <div class="card accent-blue pre-reveal">
+        <div>
+          <div class="card-top">
+            <div class="icon-box">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 2c0 5 12 5 12 10s-12 5-12 10"/><path d="M18 2c0 5-12 5-12 10s12 5 12 10"/><line x1="7" y1="6" x2="17" y2="6"/><line x1="6.3" y1="12" x2="17.7" y2="12"/><line x1="7" y1="18" x2="17" y2="18"/></svg>
+            </div>
+          </div>
+          <div class="card-title">
+            <h3>Optimizing RT-Sim for ATR-deficient cells</h3>
+            <p class="org"><span class="org-tag">Pratto Lab</span><span class="org-detail">NIH NIDDK — Summer Intern</span></p>
+          </div>
+          <ul class="card-bullets">
+            <li>Leading Hi-C compartment analysis with over <strong>20,000</strong> genomic bins to integrate 3D genome structure into origin-timing predictions, comparing normalized replication timing between compartments (image below)</li>
+            <li>Identifying workflow inefficiencies in a DNA replication simulation pipeline and leading efforts to improve usability and documentation for postdoc researchers</li>
+            <li>Supporting wet lab duties including meiotic spreads and nuclei isolation buffer preparation for fluorescence imaging </li>
+          </ul>
+          <div class="pills"><span class="pill">Hi-C Analysis</span><span class="pill">GenomicRanges Package</span><span class="pill">HPC / Biowulf</span></div>
+        </div>
+        <div class="card-media-wrapper">
+          <div class="card-media">
+            <div class="card-img-container">
+              <img src="image/RT.jpeg" class="card-img" alt="RT-Sim parameter sweep results">
+            </div>
+          </div>
+          <span class="click-hint">Click on me</span>
+        </div>
+      </div>
+
+      <div class="card accent-lavender pre-reveal">
+        <div>
+          <div class="card-top">
+            <div class="icon-box">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="2.6"/><path d="M12 9.4V4M9.8 10.3 6 7M14.2 10.3 18 7M9.4 12.6 3.5 14M14.6 12.6 20.5 14M10.8 14.4 8 20M13.2 14.4 16 20"/></svg>
+            </div>
+          </div>
+          <div class="card-title">
+            <h3>Fine-mapping &amp; ATAC-seq pipelines</h3>
+            <p class="org"><span class="org-tag">Sobreira Lab</span><span class="org-detail">UCLA — Undergraduate Research Assistant</span></p>
+          </div>
+          <ul class="card-bullets">
+            <li>Built a statistical fine-mapping workflow using SuSiE that ranks genomic variants by causal likelihood, reducing prioritized candidates by <strong>100-fold</strong> and accelerating downstream research</li>
+            <li>Streamlining and maintaining an ATAC-seq genomic pipeline relied upon by graduate students across multiple projects, ensuring consistent and reproducible outputs</li>
+            <li>Working with genomic analysis tools including FastQC, Bowtie2, and SAMtools</li>
+            <li>Supporting wet lab duties including genomic DNA extraction for multiplicity-of-infection calculations and HEK293T cell culture maintenance</li>
+          </ul>
+          <div class="pills"><span class="pill">SuSiE</span><span class="pill">ATAC-seq</span><span class="pill">GWAS</span></div>
+        </div>
+        <div class="card-media-wrapper">
+          <div class="card-media">
+            <div class="card-img-container">
+              <img src="image/FM.jpeg" class="card-img" alt="Fine-mapping results">
+            </div>
+          </div>
+          <span class="click-hint">Click on me</span>
+        </div>
+      </div>
+
+      <div class="card accent-clay pre-reveal">
+        <div>
+          <div class="card-top">
+            <div class="icon-box">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 9h18M8 4v5"/></svg>
+            </div>
+          </div>
+          <div class="card-title">
+            <h3>Epigenetic Pacemaker &amp; Population PCA</h3>
+            <p class="org"><span class="org-tag">Other Projects</span></p>
+          </div>
+          <p class="card-sublabel">Epigenetic Pacemaker (EPM)</p>
+          <ul class="card-bullets">
+            <li>Programmed a Python workflow using Pearson correlation & permutation-based bootstrap testing to validate predicted epigenetic age acceleration, evaluating why EPM predictions broke down</li>
+            <li>Identified a significant flaw in the model's assumptions and traced the issue to a known biological pattern</li>
+          </ul>
+          <p class="card-sublabel">Population Genetics</p>
+          <ul class="card-bullets">
+            <li>Processed genotype data from <strong>2,500</strong> individuals, performed linkage disequilibrium filtering and principal component analysis (PCA) to characterize global population structure</li>
+            <li>Created PCA and violin plots to communicate ancestry clustering patterns</li>
+          </ul>
+          <div class="pills"><span class="pill">PCA</span><span class="pill">Linear Regression</span><span class="pill">Resampling </span></div>
+        </div>
+        <div class="card-media-wrapper">
+          <div class="card-media two-up">
+            <div class="card-img-container">
+              <img src="image/EPM.jpeg" class="card-img" alt="Epigenetic Pacemaker results">
+            </div>
+            <div class="card-img-container">
+              <img src="image/PCA.png" class="card-img" alt="PCA population ancestry plot">
+            </div>
+          </div>
+          <span class="click-hint">Click on me</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="page pink">
+  <div class="wrap reveal">
+    <p class="spec-no">04-OFF THE CLOCK</p>
+    <div class="section-head">
+      <h2 class="tw-header" data-text="Hobbies"><span class="tw-htext"></span><span class="tw-hcursor">|</span></h2>
+    </div>
+
+    <div class="catalog">
+      <div class="card accent-clay pre-reveal">
+        <div>
+          <div class="card-top">
+            <div class="icon-box">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 3v9a2 2 0 0 0 2 2h1V3M9 3v14M17 3c-2 1-3 3-3 6s1 5 3 6M17 3v18"/></svg>
+            </div>
+          </div>
+          <p class="org static-label">Amateur food critic</p>
+          <p>I love to try new cuisines and good food is one of my favourite things to share. I even have a Spotify playlist with food-inspired song titles! 
+         </p>
+        </div>
+        <div class="card-media-wrapper">
+          <div class="card-media no-frame">
+            <div class="card-img-container">
+              <img src="image/Food.jpeg" class="card-img" alt="Beli food ranking app">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Video Editing moved before Running -->
+      <div class="card accent-lavender pre-reveal">
+        <div>
+          <div class="card-top">
+            <div class="icon-box">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="5" width="14" height="14" rx="1.5"/><path d="M16 9l6-3v12l-6-3"/></svg>
+            </div>
+          </div>
+          <p class="org static-label">Video Editing &amp; Web Development</p>
+          <p>I love to edit videos and capture significant moments. I also enjoy web development, and right now I'm also building a platform to help my pre-med friends track their MCAT progress.</p>
+        </div>
+        <div class="card-media-wrapper">
+          <div class="card-media no-frame">
+            <div class="card-img-container">
+              <video class="card-vid" src="https://res.cloudinary.com/feus8jyr/video/upload/v1785023731/Adobe_Express_-_copy_DDEE50A4-B668-4D4E-85A7-73B81A308BCE_pmsuy5.mp4" controls playsinline preload="metadata"></video>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card accent-blue pre-reveal">
+        <div>
+          <div class="card-top">
+            <div class="icon-box">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="13" cy="4" r="1.6"/><path d="M9 20l2-6 -3-3 1-5 4 2 1 4 4 1M8 14l-4 6"/></svg>
+            </div>
+          </div>
+          <p class="org static-label">Running</p>
+          <p> I love to run, especially because it helps to free my mind.</p>
+        </div>
+        <div class="card-media-wrapper">
+          <div class="card-media no-frame">
+            <div class="card-img-container">
+              <img src="image/Run.jpeg" class="card-img" alt="Running route">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p class="spec-no" style="margin-bottom:18px;">THE END</p>
+    <h2>I'd love to talk research or restaurant recs :)</h2>
+    <p class="footer-email">Email me at daniela25@g.ucla.edu</p>
+    <div class="contact-links">
+      <a href="https://www.linkedin.com/in/daniela15730" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="mailto:daniela25@g.ucla.edu">Email</a>
+      <a href="https://github.com/yourusername" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+    <p class="fine-print">Updated July 2026</p>
+  </div>
+</footer>
+
+<!-- Lightbox Modal Container -->
+<div class="modal-overlay" id="imageModal" aria-hidden="true">
+  <div class="modal-content">
+    <button class="modal-close" id="modalClose" aria-label="Close zoomed image">&times;</button>
+    <img src="" id="modalImg" alt="Enlarged view">
+  </div>
+</div>
+
+<script>
+  (function typewriter() {
+    const line1El = document.querySelector('.tw-line1');
+    const line2El = document.querySelector('.tw-line2');
+    const cursor = document.querySelector('.tw-cursor');
+    const laterEls = document.querySelectorAll('.reveal-later');
+    if (!line1El || !line2El) return;
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const line1 = 'Welcome to my website!';
+    const line2 = "I'm Daniela";
+
+    if (prefersReduced) {
+      line1El.textContent = line1;
+      line2El.textContent = line2;
+      cursor.classList.add('done');
+      laterEls.forEach(el => el.classList.add('in'));
+      return;
+    }
+
+    let i = 0;
+    function typeLine1() {
+      if (i <= line1.length) {
+        line1El.textContent = line1.slice(0, i);
+        i++;
+        setTimeout(typeLine1, 70);
+      } else {
+        setTimeout(typeLine2, 260);
+      }
+    }
+    let j = 0;
+    function typeLine2() {
+      if (j <= line2.length) {
+        line2El.textContent = line2.slice(0, j);
+        j++;
+        setTimeout(typeLine2, 70);
+      } else {
+        cursor.classList.add('done');
+        laterEls.forEach((el, idx) => {
+          setTimeout(() => el.classList.add('in'), 700 + idx * 600);
+        });
+      }
+    }
+    setTimeout(typeLine1, 300);
+  })();
+
+  function typeHeader(headerEl) {
+    const textEl = headerEl.querySelector('.tw-htext');
+    const cursor = headerEl.querySelector('.tw-hcursor');
+    const fullText = headerEl.getAttribute('data-text') || '';
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReduced) {
+      textEl.textContent = fullText;
+      cursor.classList.add('done');
+      return;
+    }
+
+    let k = 0;
+    function step() {
+      if (k <= fullText.length) {
+        textEl.textContent = fullText.slice(0, k);
+        k++;
+        setTimeout(step, 45);
+      } else {
+        cursor.classList.add('done');
+      }
+    }
+    step();
+  }
+
+  const headerObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        typeHeader(entry.target);
+        headerObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.tw-header').forEach(el => headerObserver.observe(el));
+
+  /* Computer screen: cycles through programming languages as scrambled letters resolve into each word */
+  (function aboutVisual() {
+    const bgSection = document.getElementById('bg-section');
+    const vc = document.querySelector('.visual-computer');
+    const skillLines = document.querySelectorAll('.skill-line');
+    if (!bgSection || !vc || !skillLines.length) return;
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let hasStarted = false;
+
+    const scrambleChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ+#$%&';
+    function randomChar() {
+      return scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+    }
+
+    function decodeLine(lineEl, onDone) {
+      const word = lineEl.getAttribute('data-word') || '';
+      const textEl = lineEl.querySelector('.skill-text');
+      const cursorEl = lineEl.querySelector('.skill-cursor');
+      cursorEl.classList.remove('hidden');
+
+      let i = 0;
+      const scrambleFrames = 7;
+      function settle() {
+        if (i >= word.length) {
+          textEl.textContent = word;
+          cursorEl.classList.add('hidden');
+          onDone();
+          return;
+        }
+        let frame = 0;
+        const settled = word.slice(0, i);
+        function scrambleStep() {
+          if (frame < scrambleFrames) {
+            textEl.textContent = settled + randomChar();
+            frame++;
+            setTimeout(scrambleStep, 45);
+          } else {
+            i++;
+            textEl.textContent = word.slice(0, i);
+            setTimeout(settle, 95);
+          }
+        }
+        scrambleStep();
+      }
+      settle();
+    }
+
+    function decodeAll(idx) {
+      if (idx >= skillLines.length) return;
+      decodeLine(skillLines[idx], () => {
+        setTimeout(() => decodeAll(idx + 1), 260);
+      });
+    }
+
+    function startAnimation() {
+      if (hasStarted) return;
+      hasStarted = true;
+      vc.classList.add('animating');
+
+      if (prefersReduced) {
+        skillLines.forEach(line => {
+          line.querySelector('.skill-text').textContent = line.getAttribute('data-word') || '';
+          line.querySelector('.skill-cursor').classList.add('hidden');
+        });
+        return;
+      }
+      decodeAll(0);
+    }
+
+    const bgObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          startAnimation();
+          bgObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    bgObserver.observe(bgSection);
+  })();
+
+  (function scrollReveals() {
+    const revealEls = document.querySelectorAll('.reveal');
+    const cardEls = document.querySelectorAll('.card.pre-reveal');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+
+          const staggers = entry.target.querySelectorAll('.stagger-p');
+          staggers.forEach((p, idx) => {
+            setTimeout(() => p.classList.add('in'), idx * 160);
+          });
+
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    revealEls.forEach(el => observer.observe(el));
+
+    const cardObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const cardsInParent = Array.from(entry.target.parentElement.querySelectorAll('.card'));
+          const index = cardsInParent.indexOf(entry.target);
+          setTimeout(() => {
+            entry.target.classList.remove('pre-reveal');
+          }, index * 120);
+          cardObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    cardEls.forEach(card => cardObserver.observe(card));
+  })();
+
+  /* Spotlight & Lightbox Modal Zoom */
+  (function spotlightAndModal() {
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mx', x + 'px');
+        card.style.setProperty('--my', y + 'px');
+      });
+    });
+
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImg');
+    const modalClose = document.getElementById('modalClose');
+
+    function openModal(src, alt) {
+      modalImg.src = src;
+      modalImg.alt = alt || 'Enlarged view';
+      modal.classList.add('active');
+      modal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeModal() {
+      modal.classList.remove('active');
+      modal.setAttribute('aria-hidden', 'true');
+      setTimeout(() => { modalImg.src = ''; }, 300);
+    }
+
+    document.querySelectorAll('.card-img').forEach(img => {
+      img.addEventListener('click', () => {
+        openModal(img.src, img.alt);
+      });
+    });
+
+    if (modalClose) modalClose.addEventListener('click', closeModal);
+    if (modal) {
+      modal.addEventListener('click', e => {
+        if (e.target === modal) closeModal();
+      });
+    }
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && modal.classList.contains('active')) {
+        closeModal();
+      }
+    });
+  })();
+</script>
+</body>
+</html>
