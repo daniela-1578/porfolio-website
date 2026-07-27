@@ -397,11 +397,15 @@
   /* ---------- catalog grid ---------- */
   .catalog {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 1px;
     background: var(--line);
     border: 1px solid var(--line);
     margin-top: 10px;
+  }
+
+  @media (max-width: 900px) {
+    .catalog { grid-template-columns: 1fr; }
   }
 
   .card {
@@ -487,8 +491,8 @@
     color: var(--ink);
     margin-top: 0;
     line-height: 1.25;
-    opacity: 0;
-    transform: translateY(-6px);
+    opacity: 1;
+    transform: translateY(0);
     transition: opacity 0.25s ease, transform 0.25s ease;
   }
 
@@ -504,8 +508,8 @@
     left: 0;
     right: 0;
     margin-top: 0;
-    opacity: 1;
-    transform: translateY(0);
+    opacity: 0;
+    transform: translateY(6px);
     transition: opacity 0.25s ease, transform 0.25s ease;
   }
 
@@ -545,13 +549,15 @@
   .card.accent-blue .org-tag { color: var(--blue-pop); }
   .card.accent-clay .org-tag { color: var(--clay-pop); }
 
-  .card:hover h3 { opacity: 1; transform: translateY(0); }
-  .card:hover .org { opacity: 0; transform: translateY(6px); }
+  .card:hover h3 { opacity: 0; transform: translateY(-6px); }
+  .card:hover .org { opacity: 1; transform: translateY(0); }
 
   /* static label variant */
   .org.static-label {
     position: static;
     margin-top: 10px;
+    opacity: 1;
+    transform: none;
   }
   .card:hover .org.static-label { opacity: 1; transform: none; }
 
@@ -559,15 +565,20 @@
   .card .pills,
   .card .card-media-wrapper,
   .card .card-bullets {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: auto;
+  }
+
+  .card.hover-reveal p:not(.org),
+  .card.hover-reveal .card-media-wrapper {
     opacity: 0;
     transform: translateY(4px);
-    transition: opacity 0.2s ease, transform 0.2s ease;
     pointer-events: none;
   }
-  .card:hover p:not(.org),
-  .card:hover .pills,
-  .card:hover .card-media-wrapper,
-  .card:hover .card-bullets {
+  .card.hover-reveal:hover p:not(.org),
+  .card.hover-reveal:hover .card-media-wrapper {
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
@@ -725,6 +736,17 @@
   .card.accent-lavender .icon-box { color: var(--lavender); }
   .card.accent-blue .icon-box { color: var(--dusty-blue); }
   .card.accent-clay .icon-box { color: var(--clay); }
+
+  /* ---------- section subtitle hint (hobbies) ---------- */
+  .section-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.03em;
+    color: var(--ink-soft);
+    opacity: 0.75;
+    margin-top: -12px;
+    margin-bottom: 28px;
+  }
 
   /* ---------- Modal Lightbox ---------- */
   .modal-overlay {
@@ -970,7 +992,7 @@
   <div class="wrap reveal">
     <p class="spec-no accent-blue">03-EXPERIENCES</p>
     <div class="section-head">
-      <h2 class="tw-header" data-text="Research"><span class="tw-htext"></span><span class="tw-hcursor">|</span></h2>
+      <h2 class="tw-header" data-text="Research Experience"><span class="tw-htext"></span><span class="tw-hcursor">|</span></h2>
     </div>
 
     <div class="catalog">
@@ -998,7 +1020,7 @@
               <img src="image/RT.jpeg" class="card-img" alt="RT-Sim parameter sweep results">
             </div>
           </div>
-          <span class="click-hint">Click on me</span>
+          <span class="click-hint">Click on image</span>
         </div>
       </div>
 
@@ -1027,7 +1049,7 @@
               <img src="image/FM.jpeg" class="card-img" alt="Fine-mapping results">
             </div>
           </div>
-          <span class="click-hint">Click on me</span>
+          <span class="click-hint">Click on image</span>
         </div>
       </div>
 
@@ -1063,7 +1085,7 @@
               <img src="image/PCA.png" class="card-img" alt="PCA population ancestry plot">
             </div>
           </div>
-          <span class="click-hint">Click on me</span>
+          <span class="click-hint">Click on image</span>
         </div>
       </div>
     </div>
@@ -1076,9 +1098,10 @@
     <div class="section-head">
       <h2 class="tw-header" data-text="Hobbies"><span class="tw-htext"></span><span class="tw-hcursor">|</span></h2>
     </div>
+    <p class="section-hint">Hover over each card for more details</p>
 
     <div class="catalog">
-      <div class="card accent-clay pre-reveal">
+      <div class="card accent-clay pre-reveal hover-reveal">
         <div>
           <div class="card-top">
             <div class="icon-box">
@@ -1099,7 +1122,7 @@
       </div>
 
       <!-- Video Editing moved before Running -->
-      <div class="card accent-lavender pre-reveal">
+      <div class="card accent-lavender pre-reveal hover-reveal">
         <div>
           <div class="card-top">
             <div class="icon-box">
@@ -1118,7 +1141,7 @@
         </div>
       </div>
 
-      <div class="card accent-blue pre-reveal">
+      <div class="card accent-blue pre-reveal hover-reveal">
         <div>
           <div class="card-top">
             <div class="icon-box">
